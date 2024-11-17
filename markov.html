@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Cadeia de Markov</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 50px auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: 500;
+            margin: 10px 0 5px;
+            display: block;
+            color: #555;
+        }
+
+        input,
+        select {
+            padding: 10px;
+            width: calc(100% - 20px);
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #007BFF;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+            outline: none;
+        }
+
+        table {
+            width: 100%;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ddd;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f0f2f5;
+            font-weight: 500;
+            color: #555;
+        }
+
+        button {
+            padding: 12px;
+            width: 100%;
+            background-color: #007BFF;
+            color: white;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result-section {
+            margin-top: 20px;
+            background-color: #f9fafc;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .result-table th,
+        .result-table td {
+            text-align: left;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .result-table th {
+            background-color: #f0f2f5;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .result-table td {
+            font-size: 14px;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .print-button {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .print-button button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        .print-button button:hover {
+            background-color: #218838;
+        }
+
+        .decimal-control {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .decimal-control button {
+            width: 48%;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            button {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .container {
+                padding: 15px;
+                margin: 15px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            button {
+                font-size: 13px;
+            }
+
+            .result-table th,
+            .result-table td {
+                padding: 8px;
+            }
+        }
+
+        footer {
+            width: 98.5%;
+            background-color: #222222;
+            box-shadow: 0px -2px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+
+        .footer-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 5px;
+            object-fit: cover;
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+        }
+
+        footer .footer-title {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1.0rem;
+            font-weight: bold;
+            color: #f0f0f0;
+        }
+
+        footer .donate-button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-family: 'Roboto', sans-serif;
+            font-weight: bold;
+            color: black;
+            background-color: #DAA520;
+            /* Dourado */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        footer .donate-button:hover {
+            background-color: #FFD700;
+            /* Amarelo mais claro */
+            transform: scale(1.05);
+        }
+
+        footer .developer-credit {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 0.9rem;
+            color: #666;
+            font-family: 'Roboto', sans-serif;
+            font-weight: bold;
+        }
+
+        @media (max-width: 480px) {
+            footer .developer-credit {
+                font-size: 0.75rem;
+            }
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 100vh;
+            background-color: #f9f5f0;
+            /* Fundo claro */
+            color: #333;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            /* Espaçamento do topo */
+            left: 20px;
+            /* Espaçamento da esquerda */
+            width: 50px;
+            height: 50px;
+            background-color: #f2f2f2;
+            /* Quase branco */
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            z-index: 1000;
+            /* Garantir que o botão fique acima de outros elementos */
+            text-decoration: none;
+            /* Remove underline do link */
+        }
+
+        .back-button:hover {
+            background-color: #e0e0e0;
+            /* Efeito hover mais escuro */
+        }
+
+        .back-button i {
+            font-size: 24px;
+            color: #616161;
+            /* Cor cinza escura */
+        }
+
+        .back-button:focus {
+            outline: none;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            /* Espaçamento do topo */
+            left: 20px;
+            /* Espaçamento da esquerda */
+            width: 50px;
+            height: 50px;
+            background-color: #f2f2f2;
+            /* Quase branco */
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            z-index: 1000;
+            /* Garantir que o botão fique acima de outros elementos */
+        }
+
+        .back-button:hover {
+            background-color: #e0e0e0;
+            /* Efeito hover mais escuro */
+        }
+
+        .arrow {
+            font-size: 24px;
+            color: #616161;
+            /* Cor cinza escura */
+        }
+
+        .back-button:focus {
+            outline: none;
+        }
+        @media (max-width: 550px) {
+            footer {
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Calculadora de Cadeia de Markov</h1>
+
+        <label for="states">Número de estados:</label>
+        <input type="number" id="states" min="2" max="10" placeholder="Digite o número de estados (ex: 3)" required
+            oninput="generateMatrix()">
+
+        <label>Matriz Markoviana:</label>
+        <table id="markov-matrix"></table>
+
+        <label for="initial-quantities">Quantidade Inicial (por estado):</label>
+        <input type="text" id="initial-quantities"
+            placeholder="Digite as quantidades separadas por vírgula (ex: 100, 200, 50)" required>
+
+        <label for="prices">Preços (por estado):</label>
+        <input type="text" id="prices" placeholder="Digite os preços separados por vírgula (ex: 10.5, 15, 20)" required>
+
+        <button onclick="calculateMarkov()" style="margin-top: 10px;">Calcular Projeções</button>
+
+        <div class="decimal-control">
+            <button onclick="changeDecimals(-1)">Diminuir Casas Decimais</button>
+            <button onclick="changeDecimals(1)">Aumentar Casas Decimais</button>
+        </div>
+
+        <div class="result-section" id="result"></div>
+
+        <div class="print-button" id="printButton" style="display:none;">
+            <button onclick="window.print()">Imprimir ou Salvar em PDF</button>
+        </div>
+    </div>
+
+
+    <!-- Botão com ícone de seta -->
+    <a href="inicio.html" class="back-button">
+        <i class="fa fa-arrow-left"></i>
+    </a>
+
+    <!-- Link para o Font Awesome CDN (se não estiver já incluído) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <footer>
+        <!-- <img src="logo-dark.png" alt="Footer Logo" class="footer-logo"> -->
+        <p class="footer-title"> Modelagem e Simulação &nbsp</p>
+
+        <p class="developer-credit">Developed by Edu</p>
+    </footer>
+    <script>
+        let matrixSize = 0;
+        let decimalPlaces = 10;  // Padrão de 10 casas decimais
+
+        // Função para gerar a tabela de entrada para a matriz Markoviana
+        function generateMatrix() {
+            const states = parseInt(document.getElementById('states').value);
+            if (isNaN(states) || states < 2) {
+                return;  // Não faz nada se o número de estados for inválido
+            }
+
+            matrixSize = states;
+            const table = document.getElementById('markov-matrix');
+            table.innerHTML = '';  // Limpar a tabela existente
+
+            for (let i = 0; i < states; i++) {
+                const row = document.createElement('tr');
+                for (let j = 0; j < states; j++) {
+                    const cell = document.createElement('td');
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.step = 'any';
+                    input.placeholder = `P(${i + 1},${j + 1})`;
+                    cell.appendChild(input);
+                    row.appendChild(cell);
+                }
+                table.appendChild(row);
+            }
+        }
+
+        // Função para calcular as projeções de Markov
+        function calculateMarkov() {
+            const initialQuantities = document.getElementById('initial-quantities').value.split(',').map(Number);
+            const prices = document.getElementById('prices').value.split(',').map(Number);
+
+            if (initialQuantities.length !== matrixSize || prices.length !== matrixSize) {
+                alert("A quantidade inicial e os preços devem corresponder ao número de estados.");
+                return;
+            }
+
+            const matrix = [];
+            const rows = document.querySelectorAll('#markov-matrix tr');
+            rows.forEach(row => {
+                const rowValues = Array.from(row.querySelectorAll('input')).map(input => parseFloat(input.value));
+                if (rowValues.length === matrixSize && rowValues.reduce((a, b) => a + b, 0) === 1) {
+                    matrix.push(rowValues);
+                } else {
+                    alert("Cada linha da matriz Markoviana deve somar 1.");
+                }
+            });
+
+            if (matrix.length !== matrixSize) {
+                return;  // Não prossegue se a matriz estiver incompleta
+            }
+
+            let quantities = initialQuantities.slice();
+            const totalInitialQuantity = quantities.reduce((acc, curr) => acc + curr, 0);
+
+            const productions = [];
+            const projections = [];
+            const revenues = [];
+
+            // Etapa 0: Adiciona as quantidades iniciais no faturamento
+            let initialRevenue = quantities.map((quantity, idx) => quantity * prices[idx]);
+            revenues.push(initialRevenue);
+
+            // Projeção das próximas 10 etapas
+            for (let step = 1; step <= 10; step++) {
+                let newQuantities = new Array(matrixSize).fill(0);
+                let production = [];
+
+                for (let i = 0; i < matrixSize; i++) {
+                    for (let j = 0; j < matrixSize; j++) {
+                        newQuantities[i] += quantities[j] * matrix[j][i];
+                    }
+                    production.push(newQuantities[i]);
+                }
+
+                projections.push(newQuantities.map(q => q / totalInitialQuantity));  // Projeção
+                productions.push(production);  // Produção
+
+                // Faturamento
+                let revenue = production.map((prod, idx) => prod * prices[idx]);
+                revenues.push(revenue);
+
+                quantities = newQuantities;  // Atualiza para a próxima etapa
+            }
+
+            displayResults(productions, projections, revenues);
+        }
+
+        // Função para exibir as tabelas de Produção, Projeção e Faturamento
+        function displayResults(productions, projections, revenues) {
+            let productionHTML = '<h3>Produção (10 etapas)</h3>';
+            productionHTML += generateTable(productions, 'Estado', false, decimalPlaces);  // Casas decimais definidas
+
+            let projectionHTML = '<h3>Projeções (10 etapas)</h3>';
+            projectionHTML += generateTable(projections, 'Estado', false, decimalPlaces);  // Casas decimais definidas
+
+            let revenueHTML = '<h3>Faturamento (Etapas 0 a 10)</h3>';
+            revenueHTML += generateTable(revenues, 'Estado', true, 2);  // 2 casas decimais para faturamento
+
+            document.getElementById("result").innerHTML = productionHTML + projectionHTML + revenueHTML;
+            document.getElementById("printButton").style.display = "block";
+        }
+
+        // Função para gerar a tabela de resultados
+        function generateTable(data, headerPrefix, sum = false, decimalPlaces = 2) {
+            let tableHTML = '<table class="result-table"><tr><th>Etapa</th>';
+            for (let i = 0; i < matrixSize; i++) {
+                tableHTML += `<th>${headerPrefix} ${i + 1}</th>`;
+            }
+            if (sum) tableHTML += '<th>Total</th>';
+            tableHTML += '</tr>';
+
+            data.forEach((row, index) => {
+                tableHTML += `<tr><td>${index}</td>`;
+                let total = 0;
+                row.forEach(value => {
+                    tableHTML += `<td>${value.toFixed(decimalPlaces)}</td>`;
+                    total += value;
+                });
+                if (sum) tableHTML += `<td>${total.toFixed(decimalPlaces)}</td>`;
+                tableHTML += '</tr>';
+            });
+
+            tableHTML += '</table>';
+            return tableHTML;
+        }
+
+        // Função para ajustar casas decimais
+        function changeDecimals(value) {
+            decimalPlaces = Math.max(0, decimalPlaces + value);  // Garante que as casas decimais não fiquem negativas
+            calculateMarkov();  // Recalcula e atualiza as tabelas
+        }
+    </script>
+
+</body>
+
+</html>

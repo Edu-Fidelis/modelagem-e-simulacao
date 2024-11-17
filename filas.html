@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Teoria das Filas</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 50px auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: 500;
+            margin: 10px 0 5px;
+            display: block;
+            color: #555;
+        }
+
+        input {
+            padding: 10px;
+            width: calc(100% - 20px);
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #007BFF;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+            outline: none;
+        }
+
+        button {
+            padding: 12px;
+            width: 100%;
+            background-color: #007BFF;
+            color: white;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            margin-top: 20px;
+            background-color: #f9fafc;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .result h2 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .result-table th,
+        .result-table td {
+            text-align: left;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .result-table th {
+            background-color: #f0f2f5;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .result-table td {
+            font-size: 14px;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .print-button {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .print-button button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        .print-button button:hover {
+            background-color: #218838;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            button {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .container {
+                padding: 15px;
+                margin: 15px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            button {
+                font-size: 13px;
+            }
+
+            .result-table th,
+            .result-table td {
+                padding: 8px;
+            }
+        }
+
+        footer {
+            width: 98.5%;
+            background-color: #222222;
+            box-shadow: 0px -2px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+
+        .footer-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 5px;
+            object-fit: cover;
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+        }
+
+        footer .footer-title {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1.0rem;
+            font-weight: bold;
+            color: #f0f0f0;
+        }
+
+        footer .donate-button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-family: 'Roboto', sans-serif;
+            font-weight: bold;
+            color: black;
+            background-color: #DAA520;
+            /* Dourado */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        footer .donate-button:hover {
+            background-color: #FFD700;
+            /* Amarelo mais claro */
+            transform: scale(1.05);
+        }
+
+        footer .developer-credit {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 0.9rem;
+            color: #666;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        @media (max-width: 480px) {
+            footer .developer-credit {
+                font-size: 0.75rem;
+            }
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 100vh;
+            background-color: #f9f5f0;
+            /* Fundo claro */
+            color: #333;
+        }
+
+        /* Botão  */
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            /* Espaçamento do topo */
+            left: 20px;
+            /* Espaçamento da esquerda */
+            width: 50px;
+            height: 50px;
+            background-color: #f2f2f2;
+            /* Quase branco */
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            z-index: 1000;
+            /* Garantir que o botão fique acima de outros elementos */
+            text-decoration: none;
+            /* Remove underline do link */
+        }
+
+        .back-button:hover {
+            background-color: #e0e0e0;
+            /* Efeito hover mais escuro */
+        }
+
+        .back-button i {
+            font-size: 24px;
+            color: #616161;
+            /* Cor cinza escura */
+        }
+
+        .back-button:focus {
+            outline: none;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            /* Espaçamento do topo */
+            left: 20px;
+            /* Espaçamento da esquerda */
+            width: 50px;
+            height: 50px;
+            background-color: #f2f2f2;
+            /* Quase branco */
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            z-index: 1000;
+            /* Garantir que o botão fique acima de outros elementos */
+        }
+
+        .back-button:hover {
+            background-color: #e0e0e0;
+            /* Efeito hover mais escuro */
+        }
+
+        .arrow {
+            font-size: 24px;
+            color: #616161;
+            /* Cor cinza escura */
+        }
+
+        .back-button:focus {
+            outline: none;
+        }
+
+        @media (max-width: 550px) {
+            footer {
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Calculadora de Teoria das Filas</h1>
+
+        <label for="lambda">Taxa de Chegada (λ):</label>
+        <input type="number" id="lambda" placeholder="Digite λ (ex: 18)" required>
+
+        <label for="mu">Taxa de Atendimento (μ):</label>
+        <input type="number" id="mu" placeholder="Digite μ (ex: 20)" required>
+
+        <label for="S">Número de Servidores (S):</label>
+        <input type="number" id="S" placeholder="Digite S (ex: 2)" required>
+
+        <button onclick="calculate()">Calcular</button>
+
+        <div class="result" id="result"></div>
+
+        <div class="print-button" id="printButton" style="display:none;">
+            <button onclick="window.print()">Imprimir ou Salvar em PDF</button>
+        </div>
+    </div>
+
+    <!-- Botão com ícone de seta -->
+    <a href="inicio.html" class="back-button">
+        <i class="fa fa-arrow-left"></i>
+    </a>
+
+    <!-- Link para o Font Awesome CDN (se não estiver já incluído) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <footer>
+        <!-- <img src="logo-dark.png" alt="Footer Logo" class="footer-logo"> -->
+        <p class="footer-title"> Modelagem e Simulação &nbsp</p>
+
+        <p class="developer-credit">Developed by Edu</p>
+    </footer>
+    <script>
+        // Função para calcular ao pressionar o botão Enter
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                calculate();
+            }
+        });
+
+        function calculate() {
+            let lambda = parseFloat(document.getElementById("lambda").value);
+            let mu = parseFloat(document.getElementById("mu").value);
+            let S = parseInt(document.getElementById("S").value);
+
+            if (isNaN(lambda) || isNaN(mu) || isNaN(S) || S < 1) {
+                document.getElementById("result").innerHTML = "<p>Por favor, insira números válidos.</p>";
+                return;
+            }
+
+            let result = "";
+
+            if (S > 1) {
+                // Teoria das Filas 2 (Multi-servidores)
+                let rho = lambda / (S * mu);
+                let P0 = calculateP0(S, lambda, mu);
+                let Lq = calculateLq(S, lambda, mu, P0, rho);
+                let Lo = S * rho;
+                let L = Lq + Lo;
+                let Wq = Lq / lambda;
+                let W = Wq + (1 / mu);
+                let Ws = W - Wq;
+
+                result += `
+            <h2>Teoria das Filas 2 (Multi-servidores)</h2>
+            <table class="result-table">
+                <tr><th>Descrição</th><th>Valor</th></tr>
+                <tr><td>Utilização (ρ)</td><td><strong style="color:black;">${formatNumber(rho)}</strong></td></tr>
+                <tr><td>P0 (Probabilidade de o sistema estar vazio)</td><td><strong style="color:black;">${formatNumber(P0)}</strong></td></tr>
+                <tr><td>Número de clientes no sistema (L)</td><td><strong style="color:black;">${formatNumber(L)}</strong></td></tr>
+                <tr><td>Número de clientes na fila (Lq)</td><td><strong style="color:black;">${formatNumber(Lq)}</strong></td></tr>
+                <tr><td>Tempo médio no sistema (W)</td><td><strong style="color:black;">${formatNumber(W * 60)} minutos</strong></td></tr>
+                <tr><td>Tempo médio na fila (Wq)</td><td><strong style="color:black;">${formatNumber(Wq * 60)} minutos</strong></td></tr>
+                <tr><td>Tempo de atendimento (Ws)</td><td><strong style="color:black;">${formatNumber(Ws * 60)} minutos</strong></td></tr>
+            </table>`;
+            } else {
+                // Teoria das Filas 1 (Servidor único)
+                let rho = lambda / mu;
+                let P0 = 1 - rho;
+                let L = lambda / (mu - lambda);
+                let Lq = rho * L;
+                let W = 1 / (mu - lambda);
+                let Wq = rho * W;
+                let Ws = W - Wq;
+
+                result += `
+            <h2>Teoria das Filas 1 (Servidor único)</h2>
+            <table class="result-table">
+                <tr><th>Descrição</th><th>Valor</th></tr>
+                <tr><td>Utilização (ρ)</td><td><strong style="color:black;">${formatNumber(rho)}</strong></td></tr>
+                <tr><td>P0 (Probabilidade de o sistema estar vazio)</td><td><strong style="color:black;">${formatNumber(P0)}</strong></td></tr>
+                <tr><td>Número de clientes no sistema (L)</td><td><strong style="color:black;">${formatNumber(L)}</strong></td></tr>
+                <tr><td>Número de clientes na fila (Lq)</td><td><strong style="color:black;">${formatNumber(Lq)}</strong></td></tr>
+                <tr><td>Tempo médio no sistema (W)</td><td><strong style="color:black;">${formatNumber(W * 60)} minutos</strong></td></tr>
+                <tr><td>Tempo médio na fila (Wq)</td><td><strong style="color:black;">${formatNumber(Wq * 60)} minutos</strong></td></tr>
+                <tr><td>Tempo de atendimento (Ws)</td><td><strong style="color:black;">${formatNumber(Ws * 60)} minutos</strong></td></tr>
+            </table>`;
+            }
+
+            document.getElementById("result").innerHTML = result;
+
+            // Mostrar o botão de imprimir
+            document.getElementById("printButton").style.display = "block";
+        }
+
+        function calculateP0(S, lambda, mu) {
+            let sum = 0;
+            for (let i = 0; i < S; i++) {
+                sum += (Math.pow(lambda / mu, i) / factorial(i));
+            }
+            let rho = lambda / (S * mu);
+            let P0 = 1 / (sum + (Math.pow(lambda / mu, S) / (factorial(S) * (1 - rho))));
+            return P0;
+        }
+
+        function calculateLq(S, lambda, mu, P0, rho) {
+            return (P0 * Math.pow(lambda / mu, S) * rho) / (factorial(S) * Math.pow(1 - rho, 2));
+        }
+
+        function factorial(n) {
+            if (n === 0 || n === 1) {
+                return 1;
+            }
+            return n * factorial(n - 1);
+        }
+
+        function formatNumber(num) {
+            return num.toFixed(5).replace(/\.?0+$/, '');  // Exibe até 5 casas decimais e remove zeros à direita
+        }
+    </script>
+
+</body>
+
+</html>

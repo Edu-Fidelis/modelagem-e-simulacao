@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teoria das Filas e Cadeia de Markov</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .rectangular-button {
+            background-color: #5a0d9c;
+            /* Cor roxa escura */
+            color: white;
+            padding: 20px 40px;
+            /* Aumentei o tamanho do botão */
+            border: none;
+            border-radius: 50px;
+            /* Bordas arredondadas */
+            font-size: 20px;
+            /* Aumentei o tamanho da fonte */
+            cursor: pointer;
+            margin: 20px;
+            /* Aumentei a distância entre os botões */
+            transition: box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 0px;
+        }
+
+        .rectangular-button:hover {
+            box-shadow: 0 0 10px #00bfff, 0 0 20px #00bfff;
+            /* Efeito de luz externo */
+        }
+
+        .circular-button {
+            background-color: royalblue;
+            /* Azul royal */
+            color: white;
+            border: 2px solid white;
+            /* Adicionei borda */
+            border-radius: 50%;
+            /* Circular */
+            width: 40px;
+            /* Tamanho do botão reduzido */
+            height: 40px;
+            /* Tamanho do botão reduzido */
+            font-size: 24px;
+            /* Tamanho do ícone */
+            cursor: pointer;
+            margin: 0px 120px;
+            /* Aumentar espaço entre os botões */
+            transition: transform 0.3s;
+            /* Efeito de transição */
+        }
+
+        .circular-button:hover {
+            background-color: #003366;
+            /* Azul mais claro */
+            transform: scale(1.2);
+            /* Aumenta o tamanho ao passar o mouse */
+        }
+
+        .modal {
+            display: none;
+            /* Oculto por padrão */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            /* Fundo escuro */
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            border-radius: 10px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Estilo para a disposição dos botões */
+        .button-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        footer {
+            width: 98.5%;
+            background-color: #222222;
+            box-shadow: 0px -2px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+
+        .footer-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 5px;
+            object-fit: cover;
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+        }
+
+        footer .footer-title {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1.0rem;
+            font-weight: bold;
+            color: #f0f0f0;
+            font-weight: bold;
+        }
+
+        footer .donate-button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-family: 'Roboto', sans-serif;
+            font-weight: bold;
+            color: black;
+            background-color: #DAA520;
+            /* Dourado */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        footer .donate-button:hover {
+            background-color: #FFD700;
+            /* Amarelo mais claro */
+            transform: scale(1.05);
+        }
+
+        footer .developer-credit {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 0.9rem;
+            color: #666;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        @media (max-width: 480px) {
+            footer .developer-credit {
+                font-size: 0.75rem;
+            }
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 100vh;
+            background-color: #f9f5f0;
+            /* Fundo claro */
+            color: #333;
+        }
+
+        .container {
+            margin-top: 15rem;
+        }
+
+        @media (max-width: 550px) {
+            footer {
+                width: 95%;
+            }
+
+            .rectangular-button {
+                background-color: #5a0d9c;
+                /* Cor roxa escura */
+                color: white;
+                padding: 10px 10px;
+                /* Aumentei o tamanho do botão */
+                border: none;
+                border-radius: 10px;
+                /* Bordas arredondadas */
+                font-size: 20px;
+                /* Aumentei o tamanho da fonte */
+                cursor: pointer;
+                /* margin: 20px; */
+                /* Aumentei a distância entre os botões */
+                transition: box-shadow 0.3s;
+                position: relative;
+                overflow: hidden;
+                margin-bottom: 0px;
+                width: 10rem;
+                height: 3rem;
+                font-family: Roboto;
+                font-size: 1rem;
+                font-weight: bold;
+            }
+
+            .button-group {
+                display: flex;
+                margin-top: 10px;
+                margin-right: 1rem;
+            }
+
+            .circular-button {
+                background-color: royalblue;
+                /* Azul royal */
+                color: white;
+                border: 2px solid white;
+                /* Adicionei borda */
+                border-radius: 50%;
+                /* Circular */
+                width: 40px;
+                /* Tamanho do botão reduzido */
+                height: 40px;
+                /* Tamanho do botão reduzido */
+                font-size: 24px;
+                /* Tamanho do ícone */
+                cursor: pointer;
+                margin: 0px 85px;
+                /* Aumentar espaço entre os botões */
+                transition: transform 0.3s;
+                /* Efeito de transição */
+            }
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+        /* Importa a fonte Roboto */
+
+        .typewriter h1 {
+            overflow: hidden;
+            /* Esconde o texto extra que ainda não foi "digitado" */
+            border-right: 4px solid #5a0d9c;
+            /* Adiciona o efeito de cursor */
+            white-space: nowrap;
+            /* Impede que o texto quebre para a próxima linha */
+            margin: 0 auto;
+            /* Centraliza o título */
+            font-family: 'Roboto', sans-serif;
+            /* Aplica a fonte Roboto */
+            font-size: 2.5rem;
+            /* Tamanho do texto */
+            font-weight: 700;
+            /* Usa Roboto em negrito */
+            color: #5a0d9c;
+            /* Cor do texto */
+            animation: typing 3s steps(20, end), blink 0.6s step-end infinite;
+        }
+
+        /* Animação de digitação */
+        @keyframes typing {
+            from {
+                width: 0;
+                /* Começa sem mostrar texto */
+            }
+
+            to {
+                width: 100%;
+                /* Mostra todo o texto */
+            }
+        }
+
+        /* Animação do cursor piscando */
+        @keyframes blink {
+
+            from,
+            to {
+                border-color: transparent;
+                /* Cursor invisível */
+            }
+
+            50% {
+                border-color: #5a0d9c;
+                /* Cursor visível */
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <div class="container">
+        <div class="typewriter">
+            <h1>Seja Bem-vindo</h1>
+        </div>
+        <button class="rectangular-button" id="filas-button">Teoria das Filas</button>
+        <button class="rectangular-button" id="markov-button">Cadeia de Markov</button>
+
+        <div class="button-group">
+            <button class="circular-button" id="filas-info">?</button>
+            <button class="circular-button" id="markov-info">?</button>
+        </div>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <span class="close" id="close-modal">&times;</span>
+            <div class="modal-body" id="modal-body">
+                <!-- Conteúdo do modal será inserido aqui -->
+            </div>
+        </div>
+    </div>
+    <footer>
+        <!-- <img src="logo-dark.png" alt="Footer Logo" class="footer-logo"> -->
+        <p class="footer-title"> Modelagem e Simulação &nbsp</p>
+
+        <p class="developer-credit">Developed by Edu</p>
+    </footer>
+    <script>
+        document.getElementById('filas-button').onclick = function () {
+            window.location.href = 'filas.html'; // Redirecionar para filas.html
+        };
+
+        document.getElementById('markov-button').onclick = function () {
+            window.location.href = 'markov.html'; // Redirecionar para markov.html
+        };
+
+        document.getElementById('filas-info').onclick = function () {
+            openModal('Teoria das Filas', 'A Teoria das Filas é um campo da matemática que estuda como as filas se formam e como os serviços podem ser otimizados. Esse estudo é aplicado em diversas áreas, como telecomunicações, onde é essencial para gerenciar chamadas em espera; no setor de saúde, para otimizar o atendimento em hospitais; e em transportes, para melhorar a eficiência em terminais e estações. A teoria examina fatores como a taxa de chegada de clientes, o tempo de atendimento, e o número de servidores disponíveis, ajudando a prever o tempo de espera e a reduzir congestionamentos. Técnicas como a simulação são frequentemente utilizadas para testar diferentes cenários e melhorar a experiência do cliente.');
+        };
+
+        document.getElementById('markov-info').onclick = function () {
+            openModal('Cadeia de Markov', 'Uma Cadeia de Markov é um modelo matemático que descreve um sistema em que a próxima posição ou estado depende somente do estado atual e não de estados anteriores. Esse conceito é amplamente utilizado em diversas disciplinas, como estatística, teoria de filas, e ciência da computação. Em aplicações práticas, as cadeias de Markov são usadas para prever sequências de eventos, como a probabilidade de um cliente comprar um produto após visitar uma página. Elas também são fundamentais em algoritmos de aprendizado de máquina, como o reconhecimento de fala e o processamento de linguagem natural, onde as transições entre palavras ou estados são modeladas para facilitar a compreensão e a análise.');
+        };
+
+        document.getElementById('close-modal').onclick = function () {
+            closeModal();
+        };
+
+        window.onclick = function (event) {
+            const modal = document.getElementById('modal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+
+        function openModal(title, content) {
+            document.getElementById('modal-body').innerHTML = `<h2>${title}</h2><p>${content}</p>`;
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+    </script>
+</body>
+
+</html>
